@@ -31,11 +31,30 @@ export function CommandInput({
 
   useEffect(() => {
     if (inputRef && typeof inputRef === "object" && hiddenInputRef.current) {
-      (inputRef as React.MutableRefObject<HTMLInputElement>).current = hiddenInputRef.current;
+      (inputRef as React.RefObject<HTMLInputElement>).current = hiddenInputRef.current;
     }
   }, [inputRef]);
 
   const handleContainerClick = () => {
+    hiddenInputRef.current?.focus();
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData("text");
+    onChange(value + pasted);
+    hiddenInputRef.current?.focus();
+  };
+
+  const handleCopy = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.clipboardData.setData("text/plain", value);
+  };
+
+  const handleCut = (e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.clipboardData.setData("text/plain", value);
+    onChange("");
     hiddenInputRef.current?.focus();
   };
 
@@ -58,6 +77,10 @@ export function CommandInput({
         <div
           ref={containerRef}
           onClick={handleContainerClick}
+          onPaste={handlePaste}
+          onCopy={handleCopy}
+          onCut={handleCut}
+          tabIndex={0}
           style={{
             position: "relative",
             flex: 1,
@@ -67,6 +90,7 @@ export function CommandInput({
             background: "transparent",
             whiteSpace: "pre",
             cursor: "text",
+            outline: "none",
           }}
         >
           <span>{value}</span>

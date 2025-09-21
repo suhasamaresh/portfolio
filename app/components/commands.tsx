@@ -8,20 +8,20 @@ type Command = {
 
 const langIcons = {
   javascript:
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0Y3REYxRSIvPgo8cGF0aCBkPSJNMTguNSAxNi41QzE4LjUgMTcuMzI4NCAxNy44Mjg0IDE4IDE3IDE4SDE1QzE0LjE3MTYgMTggMTMuNSAxNy4zMjg0IDEzLjUgMTYuNVYxMkgxNS41VjE2LjVIMTdWMTJIMTguNVYxNi41WiIgZmlsbD0iIzAwMCIvPgo8cGF0aCBkPSJNOC41IDE0LjVDOC41IDE1LjMyODQgOS4xNzE2IDE2IDEwIDE2SDExQzExLjgyODQgMTYgMTIuNSAxNS4zMjg0IDEyLjUgMTQuNVYxMkgxMC41VjE0LjVIMTBWMTJIOC41VjE0LjVaIiBmaWxsPSIjMDAwIi8+CjwvZz4KPC9zdmc+",
+    "/jsimage.png",
   typescript:
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzMxNzhDNiIvPgo8dGV4dCB4PSI1IiB5PSIxNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiPnRzPC90ZXh0Pgo8L3N2Zz4=",
+    "/typescriptimage.png",
   python:
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzMzNzZBQiIvPgo8Y2lyY2xlIGN4PSIxMCIgY3k9IjgiIHI9IjIiIGZpbGw9IiNGRkQ0M0IiLz4KPGNST2NsZSBjeD0iMTQiIGN5PSIxNiIgcj0iMiIgZmlsbD0iI0ZGRDQzNCIvPgo8cGF0aCBkPSJNOCA4QzggMTIgMTYgMTIgMTYgMTYiIHN0cm9rZT0iI0ZGRDQzNCIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+CjwvcGF0aD4KPC9zdmc+",
+    "/pythonimage.png",
   rust:
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0NEMjgwOSIvPgo8cGF0aCBkPSJNMTIgNkM5IDYgNiA5IDYgMTJDNiAxNSA5IDE4IDEyIDE4QzE1IDE4IDE4IDE1IDE4IDEyQzE4IDkgMTUgNiAxMiA2WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTEyIDhDMTMuMTA0NiA4IDE0IDguODk1NCAxNCA5LjlDMTQgMTEuMTA0NiAxMy4xMDQ2IDEyIDEyIDEyQzEwLjg5NTQgMTIgMTAgMTEuMTA0NiAxMCAxMEMxMCA4Ljg5NTQgMTAuODk1NCA4IDEyIDhaIiBmaWxsPSIjQ0QyODA5Ii8+Cjwvc3ZnPg==",
+    "/rustimage.png",
   cpp:
-    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwNjc5MyIvPgo8dGV4dCB4PSI0IiB5PSIxNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMCIgZmlsbD0id2hpdGUiPkMrKzwvdGV4dD4KPC9zdmc+",
+    "/cppimage.png",
 };
 
 export function unlockCommandsBasedOnBehavior(
 ) {
-  return ["about", "projects", "skills", "work", "leadership", "contact", "help"];
+  return ["about", "projects", "skills", "work", "leadership", "contact"];
 }
 
 export const commands: Command[] = [
@@ -30,12 +30,12 @@ export const commands: Command[] = [
     description: "Complete profile - personal info, education, journey & achievements",
     handler: async () => {
       return (
-        <div>
+        <div className="font-mono">
           <div style={{ color: "#03ff7e" }}>▶ COMPLETE DIGITAL PROFILE</div>
           <div style={{ color: "#b8bec6", margin: "12px 0" }}>
           <>👋 Hey there! I&apos;m <strong>Suhas A</strong>, a passionate Computer
             Science student with 2+ years of hands-on experience building
-            production-grade web applications. I specialize in the JavaScript
+           web applications. I specialize in the JavaScript
             ecosystem and love transforming ideas into digital reality.</>
           </div>
           <div style={{ margin: "12px 0" }}>
@@ -50,10 +50,6 @@ export const commands: Command[] = [
             <div>
               <strong style={{ color: "#03ff7e" }}>📧 Email:</strong>{" "}
               suhasamaresh@gmail.com
-            </div>
-            <div>
-              <strong style={{ color: "#03ff7e" }}>🎯 Current Role:</strong>{" "}
-              Software Development Intern
             </div>
           </div>
           <div style={{ margin: "12px 0" }}>
@@ -147,10 +143,9 @@ export const commands: Command[] = [
               🌟 BEYOND THE CODE
             </div>
             <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
-              Basketball enthusiast • Chess player • Music lover • Competitive Programming • Multilingual learning
+              Basketball • Chess player • Music lover • Competitive Programming (Trying to get started XD.) • Multilingual learning (German, Spanish)
             </div>
           </div>
-
           <div style={{ color: "#03ff7e", marginTop: "16px" }}>
             &quot;From curious student to production-ready developer in 2+ years!&quot;
           </div>
@@ -164,7 +159,7 @@ export const commands: Command[] = [
     description: "Portfolio of digital creations and technical innovations",
     handler: async () => {
       return (
-        <div>
+        <div className="font-mono">
           <div style={{ color: "#03ff7e" }}>▶ PROJECT PORTFOLIO</div>
           <div style={{ color: "#b8bec6", margin: "8px 0" }}>
             I&apos;ve engineered diverse digital solutions, from encrypted platforms to management systems.
@@ -282,7 +277,7 @@ export const commands: Command[] = [
     description: "Technical expertise and programming proficiency matrix",
     handler: async () => {
       return (
-        <div>
+        <div className="font-mono">
           <div style={{ color: "#03ff7e" }}>▶ TECHNICAL SKILL MATRIX</div>
           <div style={{ margin: "16px 0" }}>
             <div
@@ -315,11 +310,6 @@ export const commands: Command[] = [
                 />
                 <div style={{ flex: 1 }}>
                   <span style={{ fontWeight: "bold", color: "#03ff7e" }}>{lang}</span>
-                  <span
-                    style={{ fontSize: "0.8rem", color: "#b8bec6", marginLeft: "8px" }}
-                  >
-                    {info.level} • {info.projects} projects
-                  </span>
                 </div>
               </div>
             ))}
@@ -393,7 +383,7 @@ export const commands: Command[] = [
     description: "Professional experience and measurable impact",
     handler: async () => {
       return (
-        <div>
+        <div className="font-mono">
           <div style={{ color: "#03ff7e" }}>▶ PROFESSIONAL EXPERIENCE</div>
           <div style={{ margin: "16px 0" }}>
             <div>
@@ -483,7 +473,7 @@ export const commands: Command[] = [
     description: "Community leadership and mentoring experience",
     handler: async () => {
       return (
-        <div>
+        <div className="font-mono">
           <div style={{ color: "#03ff7e" }}>▶ LEADERSHIP & COMMUNITY IMPACT</div>
 
           <div style={{ margin: "16px 0" }}>
@@ -580,7 +570,7 @@ export const commands: Command[] = [
     description: "Get in touch and connect professionally",
     handler: async () => {
       return (
-        <div>
+        <div className="font-mono">
           <div style={{ color: "#03ff7e" }}>▶ PROFESSIONAL CONTACT INFORMATION</div>
 
           <div style={{ margin: "16px 0" }}>
@@ -656,76 +646,12 @@ export const commands: Command[] = [
               <br />
               • Open Source Collaborations
               <br />
-              • Technical Discussions & Mentoring
+              • Technical Discussions 
               <br />
-              • Hackathons & Competitive Programming
+              • Hackathons 
               <br />
               • Full-Stack Development Projects
             </div>
-          </div>
-        </div>
-      );
-    },
-  },
-
-  {
-    name: "help",
-    description: "List all available commands and navigation guide",
-    handler: async () => {
-      return (
-        <div>
-          <div style={{ color: "#03ff7e" }}>▶ TERMINAL COMMAND GUIDE</div>
-
-          <div style={{ margin: "16px 0" }}>
-            <div style={{ color: "#b8bec6", marginBottom: "12px" }}>
-              Welcome to my interactive digital consciousness! Here are the 7 core commands to explore my profile:
-            </div>
-
-            <div style={{ marginLeft: "16px" }}>
-              <div style={{ marginBottom: "8px" }}>
-                <span style={{ color: "#03ff7e" }}>about</span> - Complete profile with education, journey & achievements
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <span style={{ color: "#03ff7e" }}>projects</span> - Portfolio of digital creations and technical innovations
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <span style={{ color: "#03ff7e" }}>skills</span> - Technical expertise and programming proficiency matrix
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <span style={{ color: "#03ff7e" }}>work</span> - Professional experience and measurable impact
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <span style={{ color: "#03ff7e" }}>leadership</span> - Community leadership and mentoring experience
-              </div>
-              <div style={{ marginBottom: "8px" }}>
-                <span style={{ color: "#03ff7e" }}>contact</span> - Get in touch and connect professionally
-              </div>
-              <div className="mb-[8px]">
-                <span style={{ color: "#03ff7e" }}>help</span> - Show this command guide
-              </div>
-              <div>
-                <span style={{ color: "#03ff7e" }}>clear</span> - Clear the terminal screen
-              </div>
-            </div>
-          </div>
-
-          <div style={{ margin: "16px 0" }}>
-            <div style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}>
-              💡 NAVIGATION TIPS
-            </div>
-            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
-              • Type any command name to explore that section
-              <br />
-              • Start with &#39;about&#39; for a comprehensive overview
-              <br />
-              • Each command provides detailed, focused information
-              <br />
-              • All information is consolidated into these 7 essential commands
-            </div>
-          </div>
-
-          <div style={{ color: "#03ff7e", marginTop: "16px" }}>
-            Ready to explore my digital universe? Try typing &#39;about&#39; to get started! 🚀
           </div>
         </div>
       );

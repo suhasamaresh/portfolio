@@ -51,7 +51,7 @@ export function useBootSequence({ isBooting, setIsBooting, setLines }: UseBootSe
           {
             id: Date.now() + "",
             content: (
-              <div>
+              <div className="font-mono">
                 <div style={{ color: "#03ff7e" }}>Welcome to [SUHASA].exe</div>
                 <div style={{ color: "#b8bec6", fontSize: "0.95rem" }}>Neural pathways established. Personality matrix loaded.</div>
               </div>

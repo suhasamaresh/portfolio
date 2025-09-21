@@ -6,6 +6,7 @@ import { useBootSequence } from "./useBootSequence";
 import { CommandInput } from "./CommandInput";
 import { commands, unlockCommandsBasedOnBehavior } from "./commands";
 import type { TerminalLine } from "./../utils/types";
+import TerminalCommands from "./help";
 
 const MATRIX_THEME = {
   name: "Matrix",
@@ -26,11 +27,12 @@ export default function Terminal() {
   const [discoveredCommands, setDiscoveredCommands] = useState(
     new Set<string>(["help", "wake_up"])
   );
-  const [showMatrix, setShowMatrix] = useState(false);
+  const [showMatrix, setShowMatrix] = useState(true);
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const pet = usePet();
+
   useBootSequence({
     isBooting,
     setIsBooting,
@@ -38,12 +40,17 @@ export default function Terminal() {
     setDiscoveredCommands,
     pet,
   });
+
   const scrollToBottom = useCallback(() => {
     if (terminalRef.current) {
       terminalRef.current.scrollTop = terminalRef.current.scrollHeight;
     }
   }, []);
-  useEffect(() => { scrollToBottom(); }, [lines, scrollToBottom]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [lines, scrollToBottom]);
+
   useEffect(() => {
     const handleClick = () => {
       if (inputRef.current && !isBooting) inputRef.current.focus();
@@ -54,13 +61,14 @@ export default function Terminal() {
       return () => terminal.removeEventListener("click", handleClick);
     }
   }, [isBooting]);
+
   useEffect(() => {
     if (!isBooting && lines.length === 3) {
-      const helpCmd = commands.find((c: { name: string; }) => c.name === "help");
+      const helpCmd = commands.find((c: { name: string }) => c.name === "help");
       if (helpCmd) {
-          setTimeout(async () => {
+        setTimeout(async () => {
           const helpContent = await helpCmd.handler();
-          setLines(lines => [
+          setLines((lines) => [
             ...lines,
             {
               id: Date.now() + "",
@@ -75,20 +83,20 @@ export default function Terminal() {
   }, [isBooting, lines, discoveredCommands]);
 
   const executeCommand = async (input: string) => {
-    if(input === "clear" || input === "cls") {
+    if (input === "clear" || input === "cls") {
       setLines([]);
       setCurrentInput("");
       return;
     }
     const trimmedInput = input.trim();
     if (!trimmedInput) return;
-    setCommandHistory(h => [...h, trimmedInput]);
+    setCommandHistory((h) => [...h, trimmedInput]);
     setHistoryIndex(-1);
 
     const updatedCommands = unlockCommandsBasedOnBehavior();
     setDiscoveredCommands(new Set(updatedCommands));
 
-    setLines(lines => [
+    setLines((lines) => [
       ...lines,
       {
         id: (Date.now() + Math.random()).toString(),
@@ -126,8 +134,9 @@ export default function Terminal() {
         cmd.name === commandName ||
         (Array.isArray(cmd.aliases) && cmd.aliases.includes(commandName))
     );
+
     if (command) {
-      setDiscoveredCommands(prev => new Set([...prev, command.name]));
+      setDiscoveredCommands((prev) => new Set([...prev, command.name]));
       try {
         const result = await command.handler(args, {
           setDiscoveredCommands,
@@ -137,7 +146,7 @@ export default function Terminal() {
           commands,
         });
         if (result) {
-          setLines(lines => [
+          setLines((lines) => [
             ...lines,
             {
               id: (Date.now() + Math.random()).toString(),
@@ -148,7 +157,7 @@ export default function Terminal() {
           ]);
         }
       } catch (error) {
-        setLines(lines => [
+        setLines((lines) => [
           ...lines,
           {
             id: (Date.now() + Math.random()).toString(),
@@ -163,7 +172,7 @@ export default function Terminal() {
         ]);
       }
     } else {
-      setLines(lines => [
+      setLines((lines) => [
         ...lines,
         {
           id: (Date.now() + Math.random()).toString(),
@@ -184,6 +193,7 @@ export default function Terminal() {
     }
     setCurrentInput("");
   };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") executeCommand(currentInput);
     else if (e.key === "ArrowUp") {
@@ -207,90 +217,71 @@ export default function Terminal() {
   };
 
   return (
-    <div style={{
-      background: MATRIX_THEME.primary,
-      color: MATRIX_THEME.text,
-      minHeight: "100vh",
-      fontFamily: "monospace",
-      padding: "1rem",
-      position: "relative"
-    }}>
+    <div className="md:flex md:items-start md:justify-center md:min-h-screen relative bg-[#0d0d12]">
+      {/* Matrix Background */}
       <MatrixBackground show={showMatrix} intensity="medium" />
-      <style jsx global>{`
-        .terminal-error {
-          color: #ff3340;
-        }
-        .terminal-description {
-          color: ${MATRIX_THEME.description};
-          font-size: 0.875rem;
-        }
-        .terminal-input-line {
-          color: ${MATRIX_THEME.accent};
-          display: flex;
-        }
-        .terminal-input-arrow {
-          color: ${MATRIX_THEME.description};
-          margin: 0 0.5rem;
-        }
-        .terminal-input-command {
-          color: ${MATRIX_THEME.title};
-        }
-      `}</style>
-      <div className="max-w-4xl mx-auto relative z-10"
+
+      {/* Terminal Area */}
+      <div
+        ref={terminalRef}
         style={{
+          background: "rgba(13, 13, 18, 0.85)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          border: `1px solid ${MATRIX_THEME.accent}`,
+          color: MATRIX_THEME.text,
+          borderRadius: "1rem",
+          minHeight: "600px",
+          padding: "1.5rem",
+          boxShadow: `0 4px 32px 0 ${MATRIX_THEME.accent}22, inset 0 1px 0 rgba(255, 255, 255, 0.1)`,
+          overflowY: "auto",
+          flexGrow: 1,
           maxWidth: "900px",
-          margin: "0 auto",
-        }}>
+          margin: "1rem",
+        }}
+      >
+        <div className="flex items-center justify-between mb-4 pb-2 border-b border-[#03ff7e]">
+          <div className="flex items-center space-x-2">
+            <div className="w-3 h-3 rounded-full bg-red-600"></div>
+            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <div className="w-3 h-3 rounded-full bg-[#03ff7e]"></div>
+          </div>
+          <div className="text-[#03ff7e] text-sm">SUHASA.exe</div>
+        </div>
+        <div className="space-y-2 mb-4">
+          {lines.map((line) => (
+            <div key={line.id} style={{ lineHeight: 1.5 }}>
+              {line.content}
+            </div>
+          ))}
+        </div>
+
+        {/* Input */}
+        {!isBooting && (
+          <CommandInput
+            inputRef={inputRef}
+            value={currentInput}
+            onChange={(v: React.SetStateAction<string>) => setCurrentInput(v)}
+            onKeyDown={handleKeyPress}
+            accent={MATRIX_THEME.accent}
+            text={MATRIX_THEME.title}
+            description={MATRIX_THEME.description}
+          />
+        )}
         <div
-          ref={terminalRef}
-          style={{
-            background: MATRIX_THEME.primary,
-            border: `1px solid ${MATRIX_THEME.accent}`,
-            color: MATRIX_THEME.text,
-            borderRadius: "1rem",
-            minHeight: "600px",
-            padding: "1.5rem",
-            boxShadow: `0 4px 32px 0 ${MATRIX_THEME.accent}22`,
-            overflow: "auto",
-            transition: "background 0.2s"
-          }}
+          className="text-[#b8bec6] mt-5 text-center text-sm"
+          style={{ userSelect: "none" }}
         >
-          <div
-            className="flex items-center justify-between mb-4 pb-2"
-            style={{ borderBottom: `1px solid ${MATRIX_THEME.accent}`, display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, paddingBottom: 8 }}
-          >
-            <div className="flex items-center space-x-2" style={{ display: "flex" }}>
-              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#ff3340", marginRight: 4 }}></div>
-              <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#ffc553", marginRight: 4 }}></div>
-              <div style={{ width: 12, height: 12, borderRadius: "50%", background: MATRIX_THEME.accent }}></div>
-            </div>
-            <div style={{ color: MATRIX_THEME.accent, fontSize: "0.875rem" }}>
-              SUHASA.exe
-            </div>
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            {lines.map((line) => (
-              <div key={line.id} style={{ lineHeight: 1.5 }}>{line.content}</div>
-            ))}
-          </div>
-          {!isBooting && (
-            <CommandInput
-              inputRef={inputRef}
-              value={currentInput}
-              onChange={(v: React.SetStateAction<string>) => setCurrentInput(v)}
-              onKeyDown={handleKeyPress}
-              accent={MATRIX_THEME.accent}
-              text={MATRIX_THEME.title}
-              description={MATRIX_THEME.description}
-            />
-          )}
+          Press Tab for autocomplete • Use arrow keys for command history
+          <br />
+          This is an interactive portfolio - explore and discover hidden commands!
         </div>
-        <div style={{ color: MATRIX_THEME.description, marginTop: 20, textAlign: "center", fontSize: "0.9rem" }}>
-          <div>Press Tab for autocomplete • Use arrow keys for command history</div>
-          <div style={{ marginTop: 4 }}>
-            This is an interactive portfolio - explore and discover hidden commands!
-          </div>
-        </div>
+      </div>
+      <div
+        className="sticky top-20  font-mono"
+        style={{ alignSelf: "start" }}
+      >
+        <TerminalCommands />
       </div>
     </div>
   );
