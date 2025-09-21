@@ -330,7 +330,7 @@ export const commands: Command[] = [
               <div style={{ marginBottom: "8px" }}>
                 <strong style={{ color: "#03ff7e" }}>Backend:</strong>
                 <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
-                  Node.js, Express.js, FastAPI, RESTful APIs
+                  Node.js, Express.js, FastAPI, RESTful APIs, GraphQL, Anchor(Solana)
                 </span>
               </div>
               <div style={{ marginBottom: "8px" }}>
