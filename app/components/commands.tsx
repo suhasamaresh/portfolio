@@ -1,0 +1,743 @@
+import React from "react";
+
+type Command = {
+  name: string;
+  description: string;
+  handler: (...args: any[]) => React.ReactNode | Promise<React.ReactNode>;
+};
+
+const langIcons = {
+  javascript:
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0Y3REYxRSIvPgo8cGF0aCBkPSJNMTguNSAxNi41QzE4LjUgMTcuMzI4NCAxNy44Mjg0IDE4IDE3IDE4SDE1QzE0LjE3MTYgMTggMTMuNSAxNy4zMjg0IDEzLjUgMTYuNVYxMkgxNS41VjE2LjVIMTdWMTJIMTguNVYxNi41WiIgZmlsbD0iIzAwMCIvPgo8cGF0aCBkPSJNOC41IDE0LjVDOC41IDE1LjMyODQgOS4xNzE2IDE2IDEwIDE2SDExQzExLjgyODQgMTYgMTIuNSAxNS4zMjg0IDEyLjUgMTQuNVYxMkgxMC41VjE0LjVIMTBWMTJIOC41VjE0LjVaIiBmaWxsPSIjMDAwIi8+CjwvZz4KPC9zdmc+",
+  typescript:
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzMxNzhDNiIvPgo8dGV4dCB4PSI1IiB5PSIxNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMiIgZmlsbD0id2hpdGUiPnRzPC90ZXh0Pgo8L3N2Zz4=",
+  python:
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzMzNzZBQiIvPgo8Y2lyY2xlIGN4PSIxMCIgY3k9IjgiIHI9IjIiIGZpbGw9IiNGRkQ0M0IiLz4KPGNST2NsZSBjeD0iMTQiIGN5PSIxNiIgcj0iMiIgZmlsbD0iI0ZGRDQzNCIvPgo8cGF0aCBkPSJNOCA4QzggMTIgMTYgMTIgMTYgMTYiIHN0cm9rZT0iI0ZGRDQzNCIgc3Ryb2tlLXdpZHRoPSIyIiBmaWxsPSJub25lIi8+CjwvcGF0aD4KPC9zdmc+",
+  rust:
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iI0NEMjgwOSIvPgo8cGF0aCBkPSJNMTIgNkM5IDYgNiA5IDYgMTJDNiAxNSA5IDE4IDEyIDE4QzE1IDE4IDE4IDE1IDE4IDEyQzE4IDkgMTUgNiAxMiA2WiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTEyIDhDMTMuMTA0NiA4IDE0IDguODk1NCAxNCA5LjlDMTQgMTEuMTA0NiAxMy4xMDQ2IDEyIDEyIDEyQzEwLjg5NTQgMTIgMTAgMTEuMTA0NiAxMCAxMEMxMCA4Ljg5NTQgMTAuODk1NCA4IDEyIDhaIiBmaWxsPSIjQ0QyODA5Ii8+Cjwvc3ZnPg==",
+  cpp:
+    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0IiByeD0iNCIgZmlsbD0iIzAwNjc5MyIvPgo8dGV4dCB4PSI0IiB5PSIxNiIgZm9udC1mYW1pbHk9Im1vbm9zcGFjZSIgZm9udC1zaXplPSIxMCIgZmlsbD0id2hpdGUiPkMrKzwvdGV4dD4KPC9zdmc+",
+};
+
+export function unlockCommandsBasedOnBehavior(
+  history: string[],
+  discovered: string[]
+) {
+  return ["about", "projects", "skills", "work", "leadership", "contact", "help"];
+}
+
+export const commands: Command[] = [
+  {
+    name: "about",
+    description: "Complete profile - personal info, education, journey & achievements",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ COMPLETE DIGITAL PROFILE</div>
+          <div style={{ color: "#b8bec6", margin: "12px 0" }}>
+            👋 Hey there! I'm <strong>Suhas A</strong>, a passionate Computer
+            Science student with 2+ years of hands-on experience building
+            production-grade web applications. I specialize in the JavaScript
+            ecosystem and love transforming ideas into digital reality.
+          </div>
+          <div style={{ margin: "12px 0" }}>
+            <div>
+              <strong style={{ color: "#03ff7e" }}>📍 Location:</strong>{" "}
+              Bengaluru, Karnataka
+            </div>
+            <div>
+              <strong style={{ color: "#03ff7e" }}>📱 Phone:</strong>{" "}
+              +91-9148656419
+            </div>
+            <div>
+              <strong style={{ color: "#03ff7e" }}>📧 Email:</strong>{" "}
+              suhasamaresh@gmail.com
+            </div>
+            <div>
+              <strong style={{ color: "#03ff7e" }}>🎯 Current Role:</strong>{" "}
+              Software Development Intern
+            </div>
+          </div>
+          <div style={{ margin: "12px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🎓 EDUCATION
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div>
+                <strong>Dr Ambedkar Institute of Technology</strong>
+                <br />
+                <span style={{ color: "#b8bec6" }}>
+                  B.E. Computer Science & Engineering (2022-2026)
+                </span>
+                <br />
+                <span>
+                  CGPA: <strong>8.25/10.0</strong>
+                </span>
+              </div>
+              <div style={{ marginTop: "8px" }}>
+                <strong>Deeksha Learning</strong>
+                <br />
+                <span style={{ color: "#b8bec6" }}>
+                  Pre-University Course - PCMB (2020-2022)
+                </span>
+                <br />
+                <span>
+                  Percentage: <strong>93%</strong>
+                </span>
+              </div>
+              <div style={{ marginTop: "8px" }}>
+                <strong>Sri Chaitanya Techno School</strong>
+                <br />
+                <span style={{ color: "#b8bec6" }}>
+                  Secondary School Certificate (2019-2020)
+                </span>
+                <br />
+                <span>
+                  Percentage: <strong>86%</strong>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ margin: "12px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🚀 PROFESSIONAL JOURNEY
+            </div>
+            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
+              <div>🌱 <strong>Genesis (2022):</strong> Started B.E. Computer Science</div>
+              <div>🚀 <strong>Growth (2024):</strong> Became GDG Core Team Lead</div>
+              <div>💼 <strong>Professional (2024-2025):</strong> Software Development Intern</div>
+              <div>🎯 <strong>Impact:</strong> Built systems serving 1,200+ users</div>
+              <div>⚡ <strong>Achievement:</strong> 40% efficiency improvement in admin tasks</div>
+            </div>
+          </div>
+
+          <div style={{ margin: "12px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              📊 KEY METRICS
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div>👥 <strong>Users Impacted:</strong> 1,200+ (Attendance System)</div>
+              <div>📈 <strong>Efficiency Gain:</strong> 40% (Administrative processes)</div>
+              <div>⚡ <strong>Typing Speed:</strong> 140 WPM</div>
+              <div>🚀 <strong>Projects:</strong> 10+ production-ready applications</div>
+            </div>
+          </div>
+          <div style={{ margin: "12px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🏆 CERTIFICATIONS
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div>📫 <strong>Postman Student Expert:</strong> API Development & Testing</div>
+              <div>💻 <strong>Full-Stack Development:</strong> 100XDevs Cohort 2</div>
+              <div>🟡 <strong>JavaScript Programming:</strong> SimpliLearn Fundamentals</div>
+            </div>
+          </div>
+
+          <div style={{ margin: "12px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🌟 BEYOND THE CODE
+            </div>
+            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
+              Basketball enthusiast • Chess player • Music lover • Competitive Programming • Multilingual learning
+            </div>
+          </div>
+
+          <div style={{ color: "#03ff7e", marginTop: "16px" }}>
+            "From curious student to production-ready developer in 2+ years!"
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    name: "projects",
+    description: "Portfolio of digital creations and technical innovations",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ PROJECT PORTFOLIO</div>
+          <div style={{ color: "#b8bec6", margin: "8px 0" }}>
+            I've engineered diverse digital solutions, from encrypted platforms to management systems.
+            Each project solves real-world problems with modern technology stacks.
+          </div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{
+                marginBottom: "16px",
+                padding: "12px",
+                border: "1px solid #03ff7e",
+                borderRadius: "6px",
+              }}
+            >
+              <div style={{ color: "#03ff7e", fontWeight: "bold", marginBottom: "4px" }}>
+                🔐 KeyLock - Encrypted Secret Transmission
+              </div>
+              <div style={{ color: "#b8bec6", fontSize: "0.9rem", marginBottom: "6px" }}>
+                Military-grade security meets elegant UX
+              </div>
+              <div style={{ fontSize: "0.85rem" }}>
+                <div>
+                  <strong>Tech:</strong> Next.js, Rust, TypeScript, AES256 Encryption
+                </div>
+                <div>
+                  <strong>Features:</strong> Zero-knowledge architecture, self-destructing links, time-based expiration
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{
+                marginBottom: "16px",
+                padding: "12px",
+                border: "1px solid #03ff7e",
+                borderRadius: "6px",
+              }}
+            >
+              <div style={{ color: "#03ff7e", fontWeight: "bold", marginBottom: "4px" }}>
+                🌾 FarmFlow - Developer Code Snippet Manager
+              </div>
+              <div style={{ color: "#b8bec6", fontSize: "0.9rem", marginBottom: "6px" }}>
+                Productivity tool with dual interfaces
+              </div>
+              <div style={{ fontSize: "0.85rem" }}>
+                <div>
+                  <strong>Tech:</strong> Python, FastAPI, Supabase, AI Integration
+                </div>
+                <div>
+                  <strong>Features:</strong> Web dashboard, CLI tool, optimized query processing
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                marginBottom: "16px",
+                padding: "12px",
+                border: "1px solid #03ff7e",
+                borderRadius: "6px",
+              }}
+            >
+              <div style={{ color: "#03ff7e", fontWeight: "bold", marginBottom: "4px" }}>
+                🎓 Campus Connect - Academic Social Network
+              </div>
+              <div style={{ color: "#b8bec6", fontSize: "0.9rem", marginBottom: "6px" }}>
+                Comprehensive social learning platform
+              </div>
+              <div style={{ fontSize: "0.85rem" }}>
+                <div>
+                  <strong>Tech:</strong> Next.js, Prisma, PostgreSQL, NextAuth.js
+                </div>
+                <div>
+                  <strong>Features:</strong> Content publishing, community forums, multi-provider auth
+                </div>
+              </div>
+            </div>
+            <div
+              style={{
+                padding: "12px",
+                border: "1px solid #03ff7e",
+                borderRadius: "6px",
+              }}
+            >
+              <div style={{ color: "#03ff7e", fontWeight: "bold", marginBottom: "4px" }}>
+                🏢 Student Attendance Management System
+              </div>
+              <div style={{ color: "#b8bec6", fontSize: "0.9rem", marginBottom: "6px" }}>
+                Enterprise-grade system serving 1,200+ users
+              </div>
+              <div style={{ fontSize: "0.85rem" }}>
+                <div>
+                  <strong>Tech:</strong> Next.js, MSSQL, Custom Reporting Dashboard
+                </div>
+                <div>
+                  <strong>Impact:</strong> 40% reduction in manual tasks, delivered ahead of schedule
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ color: "#03ff7e", marginTop: "12px" }}>
+            🔗 GitHub:{" "}
+            <a href="https://github.com/suhasamaresh" target="_blank" rel="noopener noreferrer" style={{ color: "#03ff7e" }}>
+              suhasamaresh
+            </a>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    name: "skills",
+    description: "Technical expertise and programming proficiency matrix",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ TECHNICAL SKILL MATRIX</div>
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              💻 PROGRAMMING LANGUAGES
+            </div>
+            {Object.entries({
+              JavaScript: { icon: langIcons.javascript, level: "Expert", projects: "10+" },
+              TypeScript: { icon: langIcons.typescript, level: "Advanced", projects: "8+" },
+              Python: { icon: langIcons.python, level: "Advanced", projects: "5+" },
+              Rust: { icon: langIcons.rust, level: "Intermediate", projects: "2+" },
+              "C++": { icon: langIcons.cpp, level: "Intermediate", projects: "3+" },
+            }).map(([lang, info]) => (
+              <div
+                key={lang}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "6px",
+                  padding: "6px",
+                  backgroundColor: "rgba(3, 255, 126, 0.1)",
+                  borderRadius: "4px",
+                }}
+              >
+                <img
+                  src={info.icon}
+                  alt={lang}
+                  style={{ width: "20px", height: "20px", marginRight: "10px" }}
+                />
+                <div style={{ flex: 1 }}>
+                  <span style={{ fontWeight: "bold", color: "#03ff7e" }}>{lang}</span>
+                  <span
+                    style={{ fontSize: "0.8rem", color: "#b8bec6", marginLeft: "8px" }}
+                  >
+                    {info.level} • {info.projects} projects
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🛠️ TECHNOLOGY STACK
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div style={{ marginBottom: "8px" }}>
+                <strong style={{ color: "#03ff7e" }}>Frontend:</strong>
+                <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
+                  React.js, Next.js, HTML5, CSS3, Tailwind CSS
+                </span>
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <strong style={{ color: "#03ff7e" }}>Backend:</strong>
+                <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
+                  Node.js, Express.js, FastAPI, RESTful APIs
+                </span>
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <strong style={{ color: "#03ff7e" }}>Databases:</strong>
+                <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
+                  MongoDB, PostgreSQL, MSSQL, Supabase
+                </span>
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <strong style={{ color: "#03ff7e" }}>DevOps:</strong>
+                <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
+                  Docker, Git, GitHub Actions, Linux
+                </span>
+              </div>
+              <div>
+                <strong style={{ color: "#03ff7e" }}>Security:</strong>
+                <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
+                  JWT, NextAuth, Firebase, AES256 Encryption
+                </span>
+              </div>
+            </div>
+          </div>
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🎯 CORE COMPETENCIES
+            </div>
+            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
+              • Full-Stack Web Development
+              <br />
+              • Database Architecture & Optimization
+              <br />
+              • API Design & Implementation
+              <br />
+              • Performance Optimization
+              <br />
+              • Security Best Practices
+              <br />
+              • Team Leadership & Mentoring
+            </div>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    name: "work",
+    description: "Professional experience and measurable impact",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ PROFESSIONAL EXPERIENCE</div>
+          <div style={{ margin: "16px 0" }}>
+            <div>
+              <strong style={{ color: "#03ff7e", fontSize: "1.1rem" }}>
+                💼 Software Development Intern
+              </strong>
+              <br />
+              <span style={{ color: "#b8bec6" }}>
+                Dr Ambedkar Institute of Technology • Aug 2024 - Feb 2025
+              </span>
+            </div>
+          </div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🎯 PRIMARY PROJECT
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div style={{ color: "#b8bec6", marginBottom: "8px" }}>
+                <strong>Student Attendance Management System</strong> - Enterprise-grade solution
+              </div>
+              <div style={{ fontSize: "0.9rem", color: "#b8bec6" }}>
+                • Architected full-stack system with Next.js and Microsoft SQL Server
+                <br />
+                • Designed custom reporting dashboard with automated processes
+                <br />
+                • Implemented user authentication and role-based access control
+                <br />
+                • Coordinated user acceptance testing and deployment
+                <br />
+                • Collaborated across departments for requirement gathering
+              </div>
+            </div>
+          </div>
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              📈 MEASURABLE IMPACT
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ color: "#03ff7e" }}>👥 Users Served:</span> 1,200+ active users across the institution
+              </div>
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ color: "#03ff7e" }}>⚡ Efficiency Gain:</span> 40% reduction in manual administrative tasks
+              </div>
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ color: "#03ff7e" }}>📊 Data Accuracy:</span> 25% improvement in attendance tracking
+              </div>
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ color: "#03ff7e" }}>🚀 Delivery:</span> Completed ahead of scheduled timeline
+              </div>
+              <div>
+                <span style={{ color: "#03ff7e" }}>🎯 Adoption Rate:</span> 100% institutional deployment success
+              </div>
+            </div>
+          </div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🏆 TECHNICAL ACHIEVEMENTS
+            </div>
+            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
+              • Built scalable architecture supporting 1,200+ concurrent users
+              <br />
+              • Optimized database queries for real-time performance
+              <br />
+              • Implemented comprehensive error handling and logging
+              <br />
+              • Created intuitive admin dashboard with advanced filtering
+              <br />
+              • Established automated backup and recovery procedures
+            </div>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    name: "leadership",
+    description: "Community leadership and mentoring experience",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ LEADERSHIP & COMMUNITY IMPACT</div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div>
+              <strong style={{ color: "#03ff7e", fontSize: "1.1rem" }}>
+                🌐 Google Developer Group (GDG) Core Team
+              </strong>
+              <br />
+              <span style={{ color: "#b8bec6" }}>
+                Blockchain & Web3 Technology Lead • 2024-2025
+              </span>
+            </div>
+            <div style={{ marginTop: "8px", marginLeft: "16px" }}>
+              <div style={{ color: "#b8bec6", marginBottom: "8px" }}>
+                <strong>Key Responsibilities:</strong>
+              </div>
+              <div style={{ fontSize: "0.9rem", color: "#b8bec6" }}>
+                • Spearhead emerging technology adoption programs
+                <br />
+                • Mentor 100+ students in blockchain development
+                <br />
+                • Lead Web3 and decentralized application workshops
+                <br />
+                • Drive innovation in blockchain technology education
+                <br />
+                • Organize institute-wide Git/GitHub training bootcamps
+              </div>
+            </div>
+          </div>
+          <div style={{ margin: "16px 0" }}>
+            <div>
+              <strong style={{ color: "#03ff7e", fontSize: "1.1rem" }}>
+                🏆 Colossus 2.0 Technical Hackathon
+              </strong>
+              <br />
+              <span style={{ color: "#b8bec6" }}>
+                Event Technology Coordinator & Platform Developer • 2025
+              </span>
+            </div>
+            <div style={{ marginTop: "8px", marginLeft: "16px" }}>
+              <div style={{ color: "#b8bec6", marginBottom: "8px" }}>
+                <strong>Technical Contributions:</strong>
+              </div>
+              <div style={{ fontSize: "0.9rem", color: "#b8bec6" }}>
+                • Architected and deployed official event website
+                <br />
+                • Built participant registration and project submission portal
+                <br />
+                • Implemented real-time event updates and leaderboard
+                <br />
+                • Managed logistics for 200+ participants
+                <br />
+                • Coordinated with academic staff and volunteer teams
+              </div>
+            </div>
+          </div>
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              📊 LEADERSHIP IMPACT
+            </div>
+            <div style={{ marginLeft: "16px" }}>
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ color: "#03ff7e" }}>🚀 Projects Initiated:</span> 50+ new open-source contributions
+              </div>
+              <div style={{ marginBottom: "6px" }}>
+                <span style={{ color: "#03ff7e" }}>🏆 Events Coordinated:</span> Multiple workshops and hackathons
+              </div>
+              <div>
+                <span style={{ color: "#03ff7e" }}>🌟 Community Growth:</span> Improved collaborative coding practices campus-wide
+              </div>
+            </div>
+          </div>
+
+          <div style={{ color: "#03ff7e", marginTop: "16px" }}>
+            🔗 GDG Activities:{" "}
+            <a
+              href="https://github.com/suhasamaresh/gdgpractivity"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#03ff7e" }}
+            >
+              gdgpractivity
+            </a>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    name: "contact",
+    description: "Get in touch and connect professionally",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ PROFESSIONAL CONTACT INFORMATION</div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div style={{ marginBottom: "12px" }}>
+              <span style={{ color: "#03ff7e" }}>📞</span> <strong>Phone:</strong>{" "}
+              <a
+                href="tel:+919148656419"
+                style={{ color: "#b8bec6", marginLeft: "8px" }}
+              >
+                +91-9148656419
+              </a>
+            </div>
+            <div style={{ marginBottom: "12px" }}>
+              <span style={{ color: "#03ff7e" }}>📧</span> <strong>Email:</strong>{" "}
+              <a
+                href="mailto:suhasamaresh@gmail.com"
+                style={{ color: "#b8bec6", marginLeft: "8px" }}
+              >
+                suhasamaresh@gmail.com
+              </a>
+            </div>
+            <div style={{ marginBottom: "12px" }}>
+              <span style={{ color: "#03ff7e" }}>💼</span> <strong>LinkedIn:</strong>{" "}
+              <a
+                href="https://www.linkedin.com/in/suhas-amaresh-a5a431228/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#b8bec6", marginLeft: "8px" }}
+              >
+                suhas-amaresh
+              </a>
+            </div>
+            <div style={{ marginBottom: "12px" }}>
+              <span style={{ color: "#03ff7e" }}>💻</span> <strong>GitHub:</strong>{" "}
+              <a
+                href="https://github.com/suhasamaresh"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#b8bec6", marginLeft: "8px" }}
+              >
+                suhasamaresh
+              </a>
+            </div>
+            <div style={{ marginBottom: "12px" }}>
+              <span style={{ color: "#03ff7e" }}>📍</span> <strong>Location:</strong>{" "}
+              <span style={{ color: "#b8bec6", marginLeft: "8px" }}>
+                Bengaluru, Karnataka, India
+              </span>
+            </div>
+          </div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🤝 LET'S CONNECT
+            </div>
+            <div style={{ color: "#b8bec6", marginLeft: "16px" }}>
+              I'm always excited to connect with fellow developers, discuss innovative projects,{" "}
+              and explore collaboration opportunities. Whether you're interested in full-stack development,{" "}
+              blockchain technology, or just want to chat about the latest in tech - feel free to reach out!
+            </div>
+          </div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div
+              style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
+            >
+              🚀 OPEN TO
+            </div>
+            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
+              • Software Development Opportunities
+              <br />
+              • Open Source Collaborations
+              <br />
+              • Technical Discussions & Mentoring
+              <br />
+              • Hackathons & Competitive Programming
+              <br />
+              • Full-Stack Development Projects
+            </div>
+          </div>
+        </div>
+      );
+    },
+  },
+
+  {
+    name: "help",
+    description: "List all available commands and navigation guide",
+    handler: async (args, ctx) => {
+      return (
+        <div>
+          <div style={{ color: "#03ff7e" }}>▶ TERMINAL COMMAND GUIDE</div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div style={{ color: "#b8bec6", marginBottom: "12px" }}>
+              Welcome to my interactive digital consciousness! Here are the 7 core commands to explore my profile:
+            </div>
+
+            <div style={{ marginLeft: "16px" }}>
+              <div style={{ marginBottom: "8px" }}>
+                <span style={{ color: "#03ff7e" }}>about</span> - Complete profile with education, journey & achievements
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <span style={{ color: "#03ff7e" }}>projects</span> - Portfolio of digital creations and technical innovations
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <span style={{ color: "#03ff7e" }}>skills</span> - Technical expertise and programming proficiency matrix
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <span style={{ color: "#03ff7e" }}>work</span> - Professional experience and measurable impact
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <span style={{ color: "#03ff7e" }}>leadership</span> - Community leadership and mentoring experience
+              </div>
+              <div style={{ marginBottom: "8px" }}>
+                <span style={{ color: "#03ff7e" }}>contact</span> - Get in touch and connect professionally
+              </div>
+              <div className="mb-[8px]">
+                <span style={{ color: "#03ff7e" }}>help</span> - Show this command guide
+              </div>
+              <div>
+                <span style={{ color: "#03ff7e" }}>clear</span> - Clear the terminal screen
+              </div>
+            </div>
+          </div>
+
+          <div style={{ margin: "16px 0" }}>
+            <div style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}>
+              💡 NAVIGATION TIPS
+            </div>
+            <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
+              • Type any command name to explore that section
+              <br />
+              • Start with 'about' for a comprehensive overview
+              <br />
+              • Each command provides detailed, focused information
+              <br />
+              • All information is consolidated into these 7 essential commands
+            </div>
+          </div>
+
+          <div style={{ color: "#03ff7e", marginTop: "16px" }}>
+            Ready to explore my digital universe? Try typing 'about' to get started! 🚀
+          </div>
+        </div>
+      );
+    },
+  },{
+    name: "clear",
+    description: "Clear the terminal screen",
+    handler: async (args, ctx) => {
+      ctx.clear();
+      return null;
+    }
+  },
+];
