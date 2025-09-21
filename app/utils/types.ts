@@ -6,8 +6,8 @@ export interface TerminalLine {
 }
 export interface CommandContext {
   setDiscoveredCommands: React.Dispatch<React.SetStateAction<Set<string>>>;
-  pet: any;
+  pet: unknown;
   setShowMatrix: (b: boolean) => void;
   discoveredCommands: Set<string>;
-  commands: any[];
+  commands: unknown[];
 }

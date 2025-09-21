@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import MatrixBackground from "./MatrixBackground";
-import DigitalPet, { usePet } from "./DigitalPet";
+import { usePet } from "./DigitalPet";
 import { useBootSequence } from "./useBootSequence";
 import { CommandInput } from "./CommandInput";
 import { commands, unlockCommandsBasedOnBehavior } from "./commands";
@@ -30,7 +30,7 @@ export default function Terminal() {
 
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const pet = usePet(setLines);
+  const pet = usePet();
   useBootSequence({
     isBooting,
     setIsBooting,
@@ -59,7 +59,7 @@ export default function Terminal() {
       const helpCmd = commands.find((c: { name: string; }) => c.name === "help");
       if (helpCmd) {
           setTimeout(async () => {
-          const helpContent = await helpCmd.handler(discoveredCommands, commands);
+          const helpContent = await helpCmd.handler();
           setLines(lines => [
             ...lines,
             {
@@ -85,7 +85,7 @@ export default function Terminal() {
     setCommandHistory(h => [...h, trimmedInput]);
     setHistoryIndex(-1);
 
-    const updatedCommands = unlockCommandsBasedOnBehavior([...commandHistory, trimmedInput], Array.from(discoveredCommands));
+    const updatedCommands = unlockCommandsBasedOnBehavior();
     setDiscoveredCommands(new Set(updatedCommands));
 
     setLines(lines => [
@@ -119,11 +119,6 @@ export default function Terminal() {
         }
       ) => Promise<React.ReactNode> | React.ReactNode;
     }
-
-    const clearTerminal = () => {
-      setLines([]);
-    }
-
     const commandsList: Command[] = commands as Command[];
 
     const command: Command | undefined = commandsList.find(
@@ -175,10 +170,10 @@ export default function Terminal() {
           content: (
             <div>
               <div className="terminal-error">
-                Command '{commandName}' not recognized by my neural networks.
+                Command &#39;{commandName}&#39; not recognized by my neural networks.
               </div>
               <div className="terminal-description">
-                💡 Try 'help' to see available commands, or keep exploring - I might learn new ones!
+                💡 Try &#39;help&#39; to see available commands, or keep exploring - I might learn new ones!
               </div>
             </div>
           ),

@@ -21,14 +21,6 @@ const ASCII_ART = {
     CREATIVE SUBROUTINES: ACTIVE`,
 };
 
-type Line = {
-  id: string;
-  content: React.ReactNode;
-  type: string;
-  timestamp: Date;
-};
-
-
 export function useBootSequence({ isBooting, setIsBooting, setLines }: UseBootSequenceProps) {
   useEffect(() => {
     if (isBooting) {

@@ -11,7 +11,7 @@ interface UsePetReturn {
     setPet: React.Dispatch<React.SetStateAction<Pet>>;
 }
 
-export function usePet(setLines: unknown): UsePetReturn {
+export function usePet(): UsePetReturn {
     const [pet, setPet] = useState<Pet>({
         mood: "curious",
         health: 100,

@@ -3,7 +3,7 @@ import React from "react";
 type Command = {
   name: string;
   description: string;
-  handler: (...args: any[]) => React.ReactNode | Promise<React.ReactNode>;
+  handler: () => React.ReactNode | Promise<React.ReactNode>;
 };
 
 const langIcons = {
@@ -20,8 +20,6 @@ const langIcons = {
 };
 
 export function unlockCommandsBasedOnBehavior(
-  history: string[],
-  discovered: string[]
 ) {
   return ["about", "projects", "skills", "work", "leadership", "contact", "help"];
 }
@@ -30,15 +28,15 @@ export const commands: Command[] = [
   {
     name: "about",
     description: "Complete profile - personal info, education, journey & achievements",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ COMPLETE DIGITAL PROFILE</div>
           <div style={{ color: "#b8bec6", margin: "12px 0" }}>
-            👋 Hey there! I'm <strong>Suhas A</strong>, a passionate Computer
+          <>👋 Hey there! I&apos;m <strong>Suhas A</strong>, a passionate Computer
             Science student with 2+ years of hands-on experience building
             production-grade web applications. I specialize in the JavaScript
-            ecosystem and love transforming ideas into digital reality.
+            ecosystem and love transforming ideas into digital reality.</>
           </div>
           <div style={{ margin: "12px 0" }}>
             <div>
@@ -154,7 +152,7 @@ export const commands: Command[] = [
           </div>
 
           <div style={{ color: "#03ff7e", marginTop: "16px" }}>
-            "From curious student to production-ready developer in 2+ years!"
+            &quot;From curious student to production-ready developer in 2+ years!&quot;
           </div>
         </div>
       );
@@ -164,12 +162,12 @@ export const commands: Command[] = [
   {
     name: "projects",
     description: "Portfolio of digital creations and technical innovations",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ PROJECT PORTFOLIO</div>
           <div style={{ color: "#b8bec6", margin: "8px 0" }}>
-            I've engineered diverse digital solutions, from encrypted platforms to management systems.
+            I&apos;ve engineered diverse digital solutions, from encrypted platforms to management systems.
             Each project solves real-world problems with modern technology stacks.
           </div>
 
@@ -282,7 +280,7 @@ export const commands: Command[] = [
   {
     name: "skills",
     description: "Technical expertise and programming proficiency matrix",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ TECHNICAL SKILL MATRIX</div>
@@ -393,7 +391,7 @@ export const commands: Command[] = [
   {
     name: "work",
     description: "Professional experience and measurable impact",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ PROFESSIONAL EXPERIENCE</div>
@@ -483,7 +481,7 @@ export const commands: Command[] = [
   {
     name: "leadership",
     description: "Community leadership and mentoring experience",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ LEADERSHIP & COMMUNITY IMPACT</div>
@@ -580,7 +578,7 @@ export const commands: Command[] = [
   {
     name: "contact",
     description: "Get in touch and connect professionally",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ PROFESSIONAL CONTACT INFORMATION</div>
@@ -638,11 +636,11 @@ export const commands: Command[] = [
             <div
               style={{ color: "#03ff7e", fontSize: "1.1rem", marginBottom: "8px" }}
             >
-              🤝 LET'S CONNECT
+              🤝 LET&apos;S CONNECT
             </div>
             <div style={{ color: "#b8bec6", marginLeft: "16px" }}>
-              I'm always excited to connect with fellow developers, discuss innovative projects,{" "}
-              and explore collaboration opportunities. Whether you're interested in full-stack development,{" "}
+              I&apos;m always excited to connect with fellow developers, discuss innovative projects,{" "}
+              and explore collaboration opportunities. Whether you&apos;re interested in full-stack development,{" "}
               blockchain technology, or just want to chat about the latest in tech - feel free to reach out!
             </div>
           </div>
@@ -673,7 +671,7 @@ export const commands: Command[] = [
   {
     name: "help",
     description: "List all available commands and navigation guide",
-    handler: async (args, ctx) => {
+    handler: async () => {
       return (
         <div>
           <div style={{ color: "#03ff7e" }}>▶ TERMINAL COMMAND GUIDE</div>
@@ -718,7 +716,7 @@ export const commands: Command[] = [
             <div style={{ marginLeft: "16px", color: "#b8bec6" }}>
               • Type any command name to explore that section
               <br />
-              • Start with 'about' for a comprehensive overview
+              • Start with &#39;about&#39; for a comprehensive overview
               <br />
               • Each command provides detailed, focused information
               <br />
@@ -727,7 +725,7 @@ export const commands: Command[] = [
           </div>
 
           <div style={{ color: "#03ff7e", marginTop: "16px" }}>
-            Ready to explore my digital universe? Try typing 'about' to get started! 🚀
+            Ready to explore my digital universe? Try typing &#39;about&#39; to get started! 🚀
           </div>
         </div>
       );
@@ -735,8 +733,7 @@ export const commands: Command[] = [
   },{
     name: "clear",
     description: "Clear the terminal screen",
-    handler: async (args, ctx) => {
-      ctx.clear();
+    handler: async () => {
       return null;
     }
   },
