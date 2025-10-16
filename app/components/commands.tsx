@@ -133,9 +133,6 @@ export const commands: Command[] = [
             </div>
             <div style={{ marginLeft: "16px" }}>
               <div>
-                👥 <strong>Users Impacted:</strong> 1,200+ (Attendance System)
-              </div>
-              <div>
                 📈 <strong>Efficiency Gain:</strong> 40% (Administrative
                 processes)
               </div>
