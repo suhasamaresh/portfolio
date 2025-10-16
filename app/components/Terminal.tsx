@@ -273,8 +273,6 @@ export default function Terminal() {
           style={{ userSelect: "none" }}
         >
           Press Tab for autocomplete • Use arrow keys for command history
-          <br />
-          This is an interactive portfolio - explore and discover hidden commands!
         </div>
       </div>
       <div
